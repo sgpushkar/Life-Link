@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: lifelink-api
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build && pnpm --filter @lifelink/api db:generate && pnpm --filter @lifelink/api build
+    startCommand: node apps/api/dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: SMS_PROVIDER
+        value: mock
+      - key: WHATSAPP_PROVIDER
+        value: mock
+      - key: ABDM_PROVIDER
+        value: mock
+      - key: DEMO_OTP_CODE
+        value: "123456"
+      - key: DEFAULT_ROAD_SPEED_KMPH
+        value: "40"

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @lifelink/shared build && pnpm --filter @lifelink/web build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs"
+}
