@@ -194,23 +194,12 @@ export const useAppStore = create<AppState>((set, get) => ({
       });
 
       return data.user;
-    } catch {
-      // Graceful offline/demo fallback
-      const fallback = getFallbackPersona(targetPhone);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('lifelink_token', `demo-token-${fallback.phone}`);
-        localStorage.setItem('lifelink_persona_phone', fallback.phone);
-      }
-
-      set({
-        currentUser: fallback,
-        activeRole: fallback.role,
-        isLoadingPersona: false,
-      });
-
-      return fallback;
+    } catch (err: any) {
+      set({ isLoadingPersona: false });
+      throw new Error(err?.message || 'Authentication failed. Please try again.');
     }
   },
+
 
   login: async (phone: string, password: string) => {
     set({ isLoadingPersona: true });
@@ -238,28 +227,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       return data.user;
     } catch (err: any) {
-      // Check if credentials match any demo role
-      const demoAccount = DEMO_ROLE_CREDENTIALS.find((c) => c.phone === cleanPhone);
-      if (demoAccount && (password === demoAccount.password || password === 'demo1234')) {
-        const fallback = getFallbackPersona(cleanPhone);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('lifelink_token', `demo-token-${fallback.phone}`);
-          localStorage.setItem('lifelink_persona_phone', fallback.phone);
-        }
-
-        set({
-          currentUser: fallback,
-          activeRole: fallback.role,
-          isLoadingPersona: false,
-        });
-
-        return fallback;
-      }
-
       set({ isLoadingPersona: false });
-      throw new Error(err?.message || 'Invalid phone or password. Use demo credentials below.');
+      throw new Error(err?.message || 'Invalid phone or password');
     }
   },
+
 
   loginWithOtp: async (phone: string, otp: string) => {
     set({ isLoadingPersona: true });
@@ -287,28 +259,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       return data.user;
     } catch (err: any) {
-      // Check if demo OTP 123456
-      const demoAccount = DEMO_ROLE_CREDENTIALS.find((c) => c.phone === cleanPhone);
-      if (demoAccount && (otp === '123456' || otp.trim() === '123456')) {
-        const fallback = getFallbackPersona(cleanPhone);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('lifelink_token', `demo-token-${fallback.phone}`);
-          localStorage.setItem('lifelink_persona_phone', fallback.phone);
-        }
-
-        set({
-          currentUser: fallback,
-          activeRole: fallback.role,
-          isLoadingPersona: false,
-        });
-
-        return fallback;
-      }
-
       set({ isLoadingPersona: false });
-      throw new Error(err?.message || 'Invalid OTP code. Enter demo OTP 123456.');
+      throw new Error(err?.message || 'Invalid OTP. Please try again.');
     }
   },
+
 
   logout: () => {
     if (typeof window !== 'undefined') {
@@ -371,10 +326,29 @@ export const useAppStore = create<AppState>((set, get) => ({
     // If already has user in memory, don't overwrite
     if (get().currentUser) return;
 
-    // Check saved persona phone
-    const savedPhone = localStorage.getItem('lifelink_persona_phone');
-    if (savedPhone) {
-      await get().switchPersona('FACILITY_ADMIN', savedPhone);
+    // Only restore session from a REAL JWT (not leftover demo tokens)
+    const savedToken = localStorage.getItem('lifelink_token');
+    const isRealJwt = savedToken && !savedToken.startsWith('demo-token-');
+
+    if (!isRealJwt) {
+      // Clear any stale demo session artifacts so the auth guard redirects to /login
+      localStorage.removeItem('lifelink_token');
+      localStorage.removeItem('lifelink_persona_phone');
+      return;
+    }
+
+    // Verify token with the backend by calling /auth/me
+    try {
+      const data = await apiRequest<{ user: UserPersona }>('/auth/me');
+      if (data.user) {
+        set({ currentUser: data.user, activeRole: data.user.role });
+      } else {
+        throw new Error('No user returned');
+      }
+    } catch {
+      // Token is invalid/expired — clear everything and force re-login
+      localStorage.removeItem('lifelink_token');
+      localStorage.removeItem('lifelink_persona_phone');
     }
   },
 }));

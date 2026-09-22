@@ -24,12 +24,20 @@ export default function ProtectedAppLayout({
 
       const storeUser = useAppStore.getState().currentUser;
       const token = typeof window !== 'undefined' ? localStorage.getItem('lifelink_token') : null;
+      // Only treat token as valid if it's a real JWT (not a stale demo-token-*)
+      const hasValidToken = token && !token.startsWith('demo-token-');
 
-      if (!storeUser && !token) {
+      if (!storeUser || !hasValidToken) {
+        // Clear stale artifacts and redirect
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('lifelink_token');
+          localStorage.removeItem('lifelink_persona_phone');
+        }
         router.replace('/login');
       } else {
         setIsAuthorized(true);
       }
+
     };
 
     checkAuth();
