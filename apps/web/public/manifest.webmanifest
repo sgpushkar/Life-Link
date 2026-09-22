@@ -1,0 +1,21 @@
+{
+  "name": "LifeLink — Real-Time Healthcare Inventory Sharing",
+  "short_name": "LifeLink",
+  "description": "Connecting rural healthcare facilities, blood banks, and donors in minutes",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0F2333",
+  "theme_color": "#16334A",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

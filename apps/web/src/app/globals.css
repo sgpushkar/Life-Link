@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-main: #0a0a0a;
+  --bg-card: #121212;
+  --bg-surface: #181818;
+  --border-subtle: #262626;
+  --border-hover: #383838;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #d4d4d4;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  letter-spacing: -0.025em;
+}
+
+/* Minimalist Monochrome Card Surface - Zero flashy effects */
+.mono-card {
+  background: #0c0c0e;
+  border: 1px solid #222226;
+}
+
+.mono-card-hover {
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.mono-card-hover:hover {
+  border-color: #38383e;
+  background: #111114;
+}
+
+.mono-surface {
+  background: #141417;
+  border: 1px solid #222226;
+}
+
+/* Monospace numerals */
+.font-mono-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Low-Bandwidth Mode overrides */
+body.low-bandwidth * {
+  animation: none !important;
+  transition: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+body.low-bandwidth .mono-card,
+body.low-bandwidth .mono-surface {
+  background: #000000 !important;
+  border: 1px solid #27272a !important;
+}
+
+body.low-bandwidth .map-container {
+  display: none !important;
+}
+
+/* Precision Subtle Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
