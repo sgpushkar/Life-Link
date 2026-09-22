@@ -1,0 +1,451 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  FACILITY_ADMIN
+  BLOOD_BANK
+  DONOR
+  TRANSPORT
+  DHO
+  STATE_ADMIN
+}
+
+enum FacilityType {
+  DISTRICT_HOSPITAL
+  CHC
+  PHC
+  BLOOD_BANK
+  DONATION_CAMP
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  IN_USE
+  RESERVED
+  MAINTENANCE
+  ON_LOAN
+}
+
+enum BloodGroup {
+  A_POS  @map("A+")
+  A_NEG  @map("A-")
+  B_POS  @map("B+")
+  B_NEG  @map("B-")
+  AB_POS @map("AB+")
+  AB_NEG @map("AB-")
+  O_POS  @map("O+")
+  O_NEG  @map("O-")
+}
+
+enum BloodComponent {
+  WHOLE
+  PRBC
+  PLATELETS
+  PLASMA
+}
+
+enum BloodUnitStatus {
+  AVAILABLE
+  RESERVED
+  ISSUED
+  EXPIRED
+  DISCARDED
+}
+
+enum RequestKind {
+  EQUIPMENT
+  BLOOD
+}
+
+enum RequestStatus {
+  OPEN
+  MATCHED
+  IN_TRANSIT
+  FULFILLED
+  CANCELLED
+  EXPIRED
+}
+
+enum OfferStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum LogisticsType {
+  PICKUP
+  RETURN
+}
+
+enum LogisticsStatus {
+  PENDING
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  FAILED
+}
+
+enum DonorPledgeStatus {
+  PLEDGED
+  CONFIRMED
+  DONATED
+  NO_SHOW
+  CANCELLED
+}
+
+enum NotificationChannel {
+  INAPP
+  SMS
+  WHATSAPP
+}
+
+model District {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  state       String
+  centroidLat Float
+  centroidLng Float
+  facilities  Facility[]
+  createdAt   DateTime   @default(now())
+
+  @@index([centroidLat, centroidLng])
+}
+
+model Facility {
+  id                 String              @id @default(uuid())
+  name               String
+  type               FacilityType
+  districtId         String
+  district           District            @relation(fields: [districtId], references: [id])
+  lat                Float
+  lng                Float
+  address            String
+  contactPhone       String
+  is24x7             Boolean             @default(true)
+  active             Boolean             @default(true)
+  reserveFloors      Json                @default("{}")
+  quietHoursStart    String?
+  quietHoursEnd      String?
+  users              User[]
+  equipmentUnits     EquipmentUnit[]     @relation("FacilityEquipment")
+  lentEquipmentUnits EquipmentUnit[]     @relation("LentEquipment")
+  bloodUnits         BloodUnit[]
+  requests           Request[]           @relation("FacilityRequests")
+  offers             Offer[]             @relation("FacilityOffers")
+  inventorySnapshots InventorySnapshot[]
+  demandEvents       DemandEvent[]
+  forecastAlerts     ForecastAlert[]
+  notifications      Notification[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([lat, lng])
+  @@index([districtId])
+  @@index([type])
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  phone        String        @unique
+  email        String?       @unique
+  passwordHash String
+  role         UserRole
+  facilityId   String?
+  facility     Facility?     @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  abhaId       String?
+  language     String        @default("en")
+  requests     Request[]     @relation("UserRequests")
+  donorProfile DonorProfile?
+  syncOps      SyncOp[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([phone])
+  @@index([role])
+}
+
+model EquipmentType {
+  id             String          @id @default(uuid())
+  code           String          @unique
+  name           String
+  unit           String          @default("unit")
+  equipmentUnits EquipmentUnit[]
+  requests       Request[]
+  createdAt      DateTime        @default(now())
+
+  @@index([code])
+}
+
+model EquipmentUnit {
+  id               String          @id @default(uuid())
+  facilityId       String
+  facility         Facility        @relation("FacilityEquipment", fields: [facilityId], references: [id], onDelete: Cascade)
+  typeId           String
+  equipmentType    EquipmentType   @relation(fields: [typeId], references: [id])
+  assetTag         String          @unique
+  status           EquipmentStatus @default(AVAILABLE)
+  lentToFacilityId String?
+  lentToFacility   Facility?       @relation("LentEquipment", fields: [lentToFacilityId], references: [id])
+  shareable        Boolean         @default(true)
+  lastServicedAt   DateTime        @default(now())
+  notes            String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([facilityId, typeId, status])
+  @@index([status])
+}
+
+model BloodUnit {
+  id          String          @id @default(uuid())
+  facilityId  String
+  facility    Facility        @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  bloodGroup  BloodGroup
+  component   BloodComponent
+  collectedAt DateTime
+  expiresAt   DateTime
+  status      BloodUnitStatus @default(AVAILABLE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([facilityId, bloodGroup, status])
+  @@index([bloodGroup, status, expiresAt])
+  @@index([status, expiresAt])
+}
+
+// PRIVACY MANDATE:
+// Never store patient names, phone numbers, Aadhaar or ABHA IDs on Request.
+// Only ageBand, sex, and condition summary are permitted in patientSummary.
+model Request {
+  id                  String          @id @default(uuid())
+  kind                RequestKind
+  requesterFacilityId String
+  requesterFacility   Facility        @relation("FacilityRequests", fields: [requesterFacilityId], references: [id], onDelete: Cascade)
+  createdById         String
+  createdBy           User            @relation("UserRequests", fields: [createdById], references: [id])
+  equipmentTypeId     String?
+  equipmentType       EquipmentType?  @relation(fields: [equipmentTypeId], references: [id])
+  bloodGroup          BloodGroup?
+  bloodComponent      BloodComponent?
+  quantity            Int             @default(1)
+  patientCriticality  Int             @default(3) // 1 to 5
+  timeSensitivityMins Int             @default(120) // in minutes
+  patientSummary      Json // Strictly: { ageBand, sex, condition }
+  status              RequestStatus   @default(OPEN)
+  priorityScore       Float           @default(0.0)
+  scoreBreakdown      Json            @default("{}")
+  neededBy            DateTime
+  offers              Offer[]
+  allocations         Allocation[]
+  donorPledges        DonorPledge[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([status, priorityScore(sort: Desc)])
+  @@index([requesterFacilityId, status])
+  @@index([kind, status])
+}
+
+model Offer {
+  id                 String       @id @default(uuid())
+  requestId          String
+  request            Request      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  providerFacilityId String
+  providerFacility   Facility     @relation("FacilityOffers", fields: [providerFacilityId], references: [id], onDelete: Cascade)
+  unitIds            Json         @default("[]") // Array of equipmentUnit IDs or bloodUnit IDs
+  distanceKm         Float
+  etaMins            Int
+  status             OfferStatus  @default(PROPOSED)
+  allocation         Allocation?
+  expiresAt          DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([requestId, status])
+  @@index([providerFacilityId, status])
+}
+
+model Allocation {
+  id           String         @id @default(uuid())
+  requestId    String
+  request      Request        @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  offerId      String         @unique
+  offer        Offer          @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  status       String         @default("ACTIVE")
+  acceptedAt   DateTime       @default(now())
+  logisticsJobs LogisticsJob[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([requestId])
+}
+
+model LogisticsJob {
+  id                String          @id @default(uuid())
+  allocationId      String
+  allocation        Allocation      @relation(fields: [allocationId], references: [id], onDelete: Cascade)
+  type              LogisticsType   @default(PICKUP)
+  transportId       String?
+  status            LogisticsStatus @default(PENDING)
+  checklist         Json            @default("{}")
+  handoverSignatures Json           @default("{}")
+  timeline          Json            @default("[]")
+  dueAt             DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([allocationId])
+  @@index([status])
+}
+
+model DonorProfile {
+  id             String        @id @default(uuid())
+  userId         String        @unique
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bloodGroup     BloodGroup
+  lastDonatedAt  DateTime?
+  lat            Float
+  lng            Float
+  radiusKm       Float         @default(25.0)
+  available      Boolean       @default(true)
+  totalDonations Int           @default(0)
+  pledges        DonorPledge[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([bloodGroup, available])
+  @@index([lat, lng])
+}
+
+model DonorPledge {
+  id        String            @id @default(uuid())
+  requestId String
+  request   Request           @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  donorId   String
+  donor     DonorProfile      @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  status    DonorPledgeStatus @default(PLEDGED)
+  slotAt    DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([requestId, status])
+  @@index([donorId])
+}
+
+model InventorySnapshot {
+  id          String   @id @default(uuid())
+  facilityId  String
+  facility    Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  date        DateTime @db.Date
+  resourceKey String
+  available   Int
+  total       Int
+  createdAt   DateTime @default(now())
+
+  @@unique([facilityId, date, resourceKey])
+  @@index([facilityId, resourceKey, date])
+}
+
+model DemandEvent {
+  id                String   @id @default(uuid())
+  facilityId        String
+  facility          Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  resourceKey       String
+  date              DateTime @db.Date
+  quantityRequested Int
+  createdAt         DateTime @default(now())
+
+  @@index([facilityId, resourceKey, date])
+}
+
+model ForecastAlert {
+  id              String    @id @default(uuid())
+  facilityId      String
+  facility        Facility  @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  resourceKey     String
+  horizonDays     Int       @default(3)
+  predictedDemand Float
+  confidence      Float     @default(0.85)
+  message         String
+  acknowledgedAt  DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([facilityId, createdAt])
+}
+
+model Notification {
+  id         String              @id @default(uuid())
+  userId     String?
+  facilityId String?
+  facility   Facility?           @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  channel    NotificationChannel @default(INAPP)
+  template   String
+  payload    Json                @default("{}")
+  status     String              @default("SENT")
+  createdAt  DateTime            @default(now())
+
+  @@index([facilityId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model SmsOutbox {
+  id        String   @id @default(uuid())
+  toPhone   String
+  body      String
+  provider  String   @default("mock")
+  status    String   @default("DELIVERED")
+  createdAt DateTime @default(now())
+
+  @@index([toPhone, createdAt])
+}
+
+model SmsInbox {
+  id           String   @id @default(uuid())
+  fromPhone    String
+  body         String
+  parsedIntent String?
+  createdAt    DateTime @default(now())
+
+  @@index([fromPhone, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String
+  before    Json?
+  after     Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([actorId, createdAt])
+}
+
+model SyncOp {
+  id              String    @id @default(uuid())
+  clientId        String    @unique
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opType          String
+  payload         Json
+  clientTimestamp BigInt
+  appliedAt       DateTime?
+  conflict        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  @@index([userId, clientTimestamp])
+  @@index([conflict])
+}
