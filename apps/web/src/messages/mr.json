@@ -1,0 +1,42 @@
+{
+  "app_name": "लाइफलिंक",
+  "tagline": "ग्रामीण आरोग्य यंत्रणा आणि जीवनरक्षक साहित्य वाटप प्रणाली",
+  "nav": {
+    "dashboard": "डॅशबोर्ड",
+    "search": "शोध आणि विनंती",
+    "requests": "थेट रांग",
+    "blood": "रक्तपेढी",
+    "donor": "रक्तदाता ॲप",
+    "logistics": "वाहतूक व वितरण",
+    "oversight": "जिल्हा आरोग्य अहवाल",
+    "sms_sim": "एसएमएस आउटबॉक्स",
+    "feature_phone": "फीचर फोन सिम्युलेटर"
+  },
+  "roles": {
+    "FACILITY_ADMIN": "रुग्णालय प्रमुख / परिचारिका",
+    "BLOOD_BANK": "रक्तपेढी अधिकारी",
+    "DONOR": "रक्तदाता",
+    "TRANSPORT": "रुग्णवाहिका चालक",
+    "DHO": "जिल्हा आरोग्य अधिकारी",
+    "STATE_ADMIN": "राज्य आरोग्य आयुक्त"
+  },
+  "dashboard": {
+    "available_ventilators": "उपलब्ध व्हेंटिलेटर",
+    "oxygen_concentrators": "ऑक्सिजन कॉन्सन्ट्रेटर",
+    "icu_beds": "आयसीयू बेड्स",
+    "blood_units": "रक्त पिशव्या",
+    "quick_adjust": "त्वरित साठा बदल",
+    "incoming_requests": "तातडीच्या विनंत्या",
+    "active_forecast": "मागणी अंदाज सूचना",
+    "share_settings": "राखीव साठा नियम"
+  },
+  "search": {
+    "title": "संसाधन शोध आणि कर्ज विनंती",
+    "select_resource": "साहित्य निवडा",
+    "urgency_level": "रुग्ण तीव्रता व तातडी",
+    "search_supply": "जवळचा उपलब्ध साठा शोधा",
+    "freshness_fresh": "ताजे (<१५ मिनिटे)",
+    "freshness_moderate": "मध्यम (<२ तास)",
+    "freshness_stale": "जुने (>२ तास)"
+  }
+}

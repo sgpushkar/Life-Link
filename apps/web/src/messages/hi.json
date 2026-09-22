@@ -1,0 +1,42 @@
+{
+  "app_name": "लाइफलिंक",
+  "tagline": "ग्रामीण स्वास्थ्य इन्वेंट्री और जीवन रक्षक संसाधन समन्वय मंच",
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "search": "स्मार्ट खोज",
+    "requests": "लाइव कतार",
+    "blood": "रक्त बैंक",
+    "donor": "रक्तदाता",
+    "logistics": "परिवहन व लॉजिस्टिक्स",
+    "oversight": "जिला निगरानी",
+    "sms_sim": "एसएमएस आउटबॉक्स",
+    "feature_phone": "फीचर फोन सिम्युलेटर"
+  },
+  "roles": {
+    "FACILITY_ADMIN": "अस्पताल व्यवस्थापक",
+    "BLOOD_BANK": "ब्लड बैंक अधिकारी",
+    "DONOR": "रक्तदाता",
+    "TRANSPORT": "एम्बुलेंस चालक",
+    "DHO": "जिला स्वास्थ्य अधिकारी",
+    "STATE_ADMIN": "राज्य प्रशासक"
+  },
+  "dashboard": {
+    "available_ventilators": "उपलब्ध वेंटिलेटर",
+    "oxygen_concentrators": "ऑक्सीजन कंसंट्रेटर",
+    "icu_beds": "आईसीयू बेड",
+    "blood_units": "रक्त इकाइयाँ",
+    "quick_adjust": "त्वरित इन्वेंट्री समायोजन",
+    "incoming_requests": "आपातकालीन अनुरोध",
+    "active_forecast": "पूर्वानुमान चेतावनी",
+    "share_settings": "आरक्षित भंडार सीमा"
+  },
+  "search": {
+    "title": "स्मार्ट खोज और संसाधन अनुरोध",
+    "select_resource": "संसाधन चुनें",
+    "urgency_level": "रोगी की गंभीरता और तात्कालिकता",
+    "search_supply": "आस-पास आपूर्ति खोजें",
+    "freshness_fresh": "ताज़ा (<15 मिनट)",
+    "freshness_moderate": "मध्यम (<2 घंटे)",
+    "freshness_stale": "पुराना (>2 घंटे)"
+  }
+}

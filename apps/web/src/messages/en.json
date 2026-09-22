@@ -1,0 +1,42 @@
+{
+  "app_name": "LifeLink",
+  "tagline": "Real-time rural healthcare inventory & life-saving resource coordinator",
+  "nav": {
+    "dashboard": "Dashboard",
+    "search": "Smart Search",
+    "requests": "Live Queue",
+    "blood": "Blood Matrix",
+    "donor": "Donor App",
+    "logistics": "Logistics",
+    "oversight": "DHO Oversight",
+    "sms_sim": "SMS Outbox",
+    "feature_phone": "Feature Phone"
+  },
+  "roles": {
+    "FACILITY_ADMIN": "Facility Admin",
+    "BLOOD_BANK": "Blood Bank Officer",
+    "DONOR": "Blood Donor",
+    "TRANSPORT": "Ambulance / Transport",
+    "DHO": "District Health Officer",
+    "STATE_ADMIN": "State Admin"
+  },
+  "dashboard": {
+    "available_ventilators": "Available Ventilators",
+    "oxygen_concentrators": "Oxygen Concentrators",
+    "icu_beds": "ICU Beds",
+    "blood_units": "Blood Units (PRBC)",
+    "quick_adjust": "Quick Inventory Adjuster",
+    "incoming_requests": "Incoming Emergency Requests",
+    "active_forecast": "Active AI Forecast Alert",
+    "share_settings": "Share & Reserve Floors"
+  },
+  "search": {
+    "title": "Smart Search & Resource Request",
+    "select_resource": "Select Resource",
+    "urgency_level": "Patient Criticality & Urgency",
+    "search_supply": "Locate Viable Supply",
+    "freshness_fresh": "Fresh (<15m)",
+    "freshness_moderate": "Moderate (<2h)",
+    "freshness_stale": "Stale (>2h)"
+  }
+}
