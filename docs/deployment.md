@@ -123,8 +123,9 @@ For deployment directly on an Ubuntu/Debian server:
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs postgresql postgresql-contrib nginx
 
-# Install pnpm and PM2 globally
-npm install -g pnpm pm2
+# Enable Corepack and install PM2 globally
+corepack enable
+npm install -g pm2
 ```
 
 ### 4.2 Build Application Packages

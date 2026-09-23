@@ -51,12 +51,12 @@
 | **Branch** | `main` |
 | **Runtime** | `Node` |
 | **Root Directory** | *(leave blank)* |
-| **Build Command** | `npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build && pnpm --filter @lifelink/api db:generate && pnpm --filter @lifelink/api build` |
+| **Build Command** | `corepack enable && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build && pnpm --filter @lifelink/api db:generate && pnpm --filter @lifelink/api build` |
 | **Start Command** | `node apps/api/dist/server.js` |
 | **Instance Type** | `Free` |
 
 > **Note:** If using the standalone `Life-Link-API` repo, the build command simplifies to:
-> `npm install -g pnpm && pnpm install --frozen-lockfile && pnpm build`
+> `corepack enable && pnpm install --frozen-lockfile && pnpm build`
 
 ### 1.3 Add Environment Variables
 
@@ -128,12 +128,12 @@ Vercel auto-detects Next.js. Set these overrides:
 | **Root Directory** | `apps/web` |
 | **Build Command** | *(leave default — Vercel uses `next build`)* |
 | **Output Directory** | *(leave default)* |
-| **Install Command** | `cd ../.. && npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build` |
+| **Install Command** | `cd ../.. && corepack enable && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build` |
 
 > **Important:** Setting Root Directory to `apps/web` is required so Vercel builds the Next.js app correctly.
 >
 > If you're using the standalone `Life-Link-Web` repo, set Root Directory to `apps/web` and Install Command to:
-> `npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build`
+> `corepack enable && pnpm install --frozen-lockfile && pnpm --filter @lifelink/shared build`
 
 ### 2.3 Add Environment Variables
 

@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-RUN npm install -g pnpm
+RUN corepack enable
 
 COPY package.json pnpm-workspace.yaml ./
 COPY packages/shared ./packages/shared

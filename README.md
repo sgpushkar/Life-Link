@@ -160,7 +160,7 @@ sequenceDiagram
 
 ### Prerequisites
 - **Node.js:** v20.x or later
-- **Package Manager:** pnpm (`npm install -g pnpm`)
+- **Package Manager:** pnpm via Corepack (`corepack enable`)
 - **Container Runtime:** Docker & Docker Compose (for PostgreSQL 15)
 
 ### Step 1: Clone & Configure Environment

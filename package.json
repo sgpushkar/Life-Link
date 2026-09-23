@@ -2,6 +2,7 @@
   "name": "lifelink-monorepo",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "description": "LifeLink — Real-Time Healthcare Inventory Sharing Platform",
   "scripts": {
     "dev": "pnpm --parallel --filter @lifelink/* dev",
