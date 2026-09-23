@@ -51,12 +51,12 @@
 | **Branch** | `main` |
 | **Runtime** | `Node` |
 | **Root Directory** | *(leave blank)* |
-| **Build Command** | `npx --yes pnpm@9.15.4 install --frozen-lockfile && npx --yes pnpm@9.15.4 --filter @lifelink/shared build && npx --yes pnpm@9.15.4 --filter @lifelink/api db:generate && npx --yes pnpm@9.15.4 --filter @lifelink/api build` |
+| **Build Command** | `NODE_ENV=development npx --yes pnpm@9.15.4 install --frozen-lockfile && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/shared build && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/api db:generate && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/api build` |
 | **Start Command** | `node apps/api/dist/server.js` |
 | **Instance Type** | `Free` |
 
 > **Note:** If using the standalone `Life-Link-API` repo, the build command simplifies to:
-> `npx --yes pnpm@9.15.4 install --frozen-lockfile && npx --yes pnpm@9.15.4 build`
+> `NODE_ENV=development npx --yes pnpm@9.15.4 install --frozen-lockfile && NODE_ENV=development npx --yes pnpm@9.15.4 build`
 
 ### 1.3 Add Environment Variables
 
@@ -128,12 +128,12 @@ Vercel auto-detects Next.js. Set these overrides:
 | **Root Directory** | `apps/web` |
 | **Build Command** | *(leave default — Vercel uses `next build`)* |
 | **Output Directory** | *(leave default)* |
-| **Install Command** | `cd ../.. && npx --yes pnpm@9.15.4 install --frozen-lockfile && npx --yes pnpm@9.15.4 --filter @lifelink/shared build` |
+| **Install Command** | `cd ../.. && NODE_ENV=development npx --yes pnpm@9.15.4 install --frozen-lockfile && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/shared build` |
 
 > **Important:** Setting Root Directory to `apps/web` is required so Vercel builds the Next.js app correctly.
 >
 > If you're using the standalone `Life-Link-Web` repo, set Root Directory to `apps/web` and Install Command to:
-> `npx --yes pnpm@9.15.4 install --frozen-lockfile && npx --yes pnpm@9.15.4 --filter @lifelink/shared build`
+> `NODE_ENV=development npx --yes pnpm@9.15.4 install --frozen-lockfile && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/shared build`
 
 ### 2.3 Add Environment Variables
 

@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: singapore
-    buildCommand: npx --yes pnpm@9.15.4 install --frozen-lockfile && npx --yes pnpm@9.15.4 --filter @lifelink/shared build && npx --yes pnpm@9.15.4 --filter @lifelink/api db:generate && npx --yes pnpm@9.15.4 --filter @lifelink/api build
+    buildCommand: NODE_ENV=development npx --yes pnpm@9.15.4 install --frozen-lockfile && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/shared build && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/api db:generate && NODE_ENV=development npx --yes pnpm@9.15.4 --filter @lifelink/api build
     startCommand: node apps/api/dist/server.js
     envVars:
       - key: NODE_ENV
