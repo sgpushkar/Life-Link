@@ -19,6 +19,7 @@
 
 ## Table of Contents
 
+- [Hackathon Submission Pack](#hackathon-submission-pack)
 - [Problem & Mission](#problem--mission)
 - [Complete Documentation Index](#complete-documentation-index)
 - [System Architecture](#system-architecture)
@@ -34,6 +35,18 @@
 - [Monorepo Directory Structure](#monorepo-directory-structure)
 - [Swapping Mock Adapters for Live Telecom & ABDM](#swapping-mock-adapters-for-live-telecom--abdm)
 - [Honest Limitations & Next Steps](#honest-limitations--next-steps)
+
+## Hackathon Submission Pack
+
+For a zip-ready hackathon submission, use the package in [hackathon-submission/README.md](hackathon-submission/README.md) and the linked files in that folder:
+
+- [Project Overview](hackathon-submission/project-overview.md)
+- [Setup and Run Guide](hackathon-submission/setup-and-run.md)
+- [Architecture and Tech Stack](hackathon-submission/architecture.md)
+- [Judge Demo Script](hackathon-submission/judge-demo.md)
+- [Submission Checklist](hackathon-submission/submission-checklist.md)
+
+This submission pack is designed for quick review by judges and for inclusion in a final zip upload.
 
 ---
 
